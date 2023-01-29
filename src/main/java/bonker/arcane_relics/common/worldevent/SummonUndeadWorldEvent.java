@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
@@ -165,7 +164,7 @@ public class SummonUndeadWorldEvent extends WorldEvent {
     }
 
     @SubscribeEvent
-    public static void entityDrops(LivingExperienceDropEvent event) {
+    public static void entityDropsEXP(LivingExperienceDropEvent event) {
         if (event.getEntity().getTags().contains(SUMMONED_TAG)) {
             event.setCanceled(true);
         }
