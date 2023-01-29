@@ -4,14 +4,19 @@ import bonker.arcane_relics.common.item.ARItems;
 import bonker.arcane_relics.common.loot.ARGlobalLootModifiers;
 import bonker.arcane_relics.common.sound.ARSounds;
 import bonker.arcane_relics.common.worldevent.WorldEvent;
+import com.mojang.logging.LogUtils;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.slf4j.Logger;
 
 @Mod(ArcaneRelics.MODID)
 public class ArcaneRelics {
 
     public static final String MODID = "arcane_relics";
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     public ArcaneRelics() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();

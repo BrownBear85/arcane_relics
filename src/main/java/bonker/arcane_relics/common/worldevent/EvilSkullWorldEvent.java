@@ -17,7 +17,6 @@ import org.joml.Vector3f;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber
 public class EvilSkullWorldEvent extends WorldEvent {
 
     private static final Vector3f PARTICLE_COLOR = new Vector3f(0.25F, 0.1F, 0.1F);

@@ -4,6 +4,8 @@ import bonker.arcane_relics.ArcaneRelics;
 import bonker.arcane_relics.common.command.ArcaneRelicsCommand;
 import bonker.arcane_relics.common.item.ARItems;
 import bonker.arcane_relics.common.networking.ARNetworking;
+import bonker.arcane_relics.common.worldevent.WorldEvent;
+import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -18,13 +20,16 @@ import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.RegistryObject;
+import org.slf4j.Logger;
 
 public class CommonEvents {
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     @Mod.EventBusSubscriber(modid = ArcaneRelics.MODID)
     public static class CommonForgeEvents {

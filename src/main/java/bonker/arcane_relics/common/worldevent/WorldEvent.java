@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Mod.EventBusSubscriber(modid = ArcaneRelics.MODID)
 public abstract class WorldEvent {
 
     protected final ServerLevel level;
@@ -89,40 +88,26 @@ public abstract class WorldEvent {
         }
     }
 
-//    @SubscribeEvent
-//    public static void serverTick(TickEvent.ServerTickEvent event) {
-//        if (event.phase == TickEvent.Phase.START) {
-//            for (ServerLevel level : event.getServer().getAllLevels()) {
-//                for (WorldEvent worldEvent : getEvents(level)) {
-//                    if (level.isLoaded(worldEvent.blockPos)) {
-//                        worldEvent.tick();
-//                        WorldEventData.getOrCreate(level).setDirty();
-//                    }
-//                }
-//            }
-//        }
-//    }
+    @Mod.EventBusSubscriber(modid = ArcaneRelics.MODID)
+    public static class Events {
 
-    @SubscribeEvent
-    public static void levelTick(TickEvent.LevelTickEvent event) {
-        System.out.println(event);
-        System.out.println(event.phase);
-        System.out.println(event.level.dimension());
-        System.out.println(event.type);
-        if (event.level instanceof ServerLevel serverLevel && event.phase == TickEvent.Phase.END) {
-            for (WorldEvent worldEvent : getEvents(serverLevel)) {
-                if (serverLevel.isLoaded(worldEvent.blockPos)) {
-                    worldEvent.tick();
-                    WorldEventData.getOrCreate(serverLevel).setDirty();
+        @SubscribeEvent
+        public static void levelTick(TickEvent.LevelTickEvent event) {
+            if (event.level instanceof ServerLevel serverLevel && event.phase == TickEvent.Phase.END) {
+                for (WorldEvent worldEvent : getEvents(serverLevel)) {
+                    if (serverLevel.isLoaded(worldEvent.blockPos)) {
+                        worldEvent.tick();
+                        WorldEventData.getOrCreate(serverLevel).setDirty();
+                    }
                 }
             }
         }
-    }
 
-    @SubscribeEvent
-    public static void levelLoaded(LevelEvent.Load event) {
-        if (event.getLevel() instanceof ServerLevel serverLevel) {
-            WorldEventData.getOrCreate(serverLevel);
+        @SubscribeEvent
+        public static void levelLoaded(LevelEvent.Load event) {
+            if (event.getLevel() instanceof ServerLevel serverLevel) {
+                WorldEventData.getOrCreate(serverLevel);
+            }
         }
     }
 

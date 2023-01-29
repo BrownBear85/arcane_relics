@@ -90,16 +90,15 @@ public class SummonUndeadWorldEvent extends WorldEvent {
             super.tick();
         }
 
-        if (age < 100) {
+        if (age < 50) {
             if (monster != null) {
-                monster.setPos(monster.position().add(0, 0.02, 0));
+                monster.setPos(monster.position().add(0, 0.04, 0));
             }
 
-            if (age % 10 == 0) {
-                level.sendParticles(PARTICLE_OPTIONS, position.x, position.y + age * 1.2/lifetime, position.z, 25, 0.6, age * 1.2/lifetime, 0.6, 0);
+            if (age % 5 == 0) {
                 level.sendParticles(PARTICLE_OPTIONS, position.x, position.y, position.z, 25, 0.35, 0, 0.35, 0);
             }
-        } else if (age == 100) {
+        } else if (age == 50) {
             monster.goalSelector.addGoal(1, new SummonedMonsterDespawnGoal(monster));
             monster.setTarget(target);
 
