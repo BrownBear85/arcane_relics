@@ -1,0 +1,6 @@
+{
+  "parent": "arcane_relics:item/large_handheld",
+  "textures": {
+    "layer0": "arcane_relics:item/bone_handle"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "monster_disappear": {
+    "sounds": [
+      "arcane_relics:monster_disappear"
+    ],
+    "subtitle": "subtitles.arcane_relics.monster_disappear"
+  },
+  "rumble": {
+    "sounds": [
+      "arcane_relics:rumble"
+    ],
+    "subtitle": "subtitles.arcane_relics.rumble"
+  },
+  "undead_cast": {
+    "sounds": [
+      "arcane_relics:undead_cast_0",
+      "arcane_relics:undead_cast_1",
+      "arcane_relics:undead_cast_2",
+      "arcane_relics:undead_cast_3"
+    ],
+    "subtitle": "subtitles.arcane_relics.undead_cast"
+  }
+}

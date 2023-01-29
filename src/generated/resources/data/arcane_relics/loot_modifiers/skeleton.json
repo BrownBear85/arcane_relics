@@ -1,0 +1,11 @@
+{
+  "type": "arcane_relics:add_item",
+  "chance": 0.15,
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "minecraft:entities/skeleton"
+    }
+  ],
+  "item": "arcane_relics:skeleton_skull"
+}

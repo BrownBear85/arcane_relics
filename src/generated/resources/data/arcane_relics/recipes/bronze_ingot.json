@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "arcane_relics:copper_nugget"
+    },
+    {
+      "item": "arcane_relics:copper_nugget"
+    },
+    {
+      "item": "arcane_relics:copper_nugget"
+    },
+    {
+      "item": "arcane_relics:copper_nugget"
+    },
+    {
+      "item": "arcane_relics:copper_nugget"
+    },
+    {
+      "item": "minecraft:iron_nugget"
+    },
+    {
+      "item": "minecraft:iron_nugget"
+    },
+    {
+      "item": "minecraft:iron_nugget"
+    },
+    {
+      "item": "minecraft:iron_nugget"
+    }
+  ],
+  "result": {
+    "item": "arcane_relics:bronze_ingot"
+  }
+}

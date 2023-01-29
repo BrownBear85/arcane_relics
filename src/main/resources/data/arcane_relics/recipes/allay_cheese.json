@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "##",
+        "##"
+    ],
+    "key": {
+        "#": {
+            "item": "arcane_relics:allay_milk"
+        }
+    },
+    "result": {
+        "item": "arcane_relics:allay_cheese",
+        "count": 1
+    }
+}

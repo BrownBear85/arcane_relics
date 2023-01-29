@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "arcane_relics:undead_sword"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_undead_sword_ingredients": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "arcane_relics:bone_handle"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_undead_sword_ingredients",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "arcane_relics:undead_sword"
+    ]
+  }
+}

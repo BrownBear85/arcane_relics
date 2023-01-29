@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "bonker.arcane_relics.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "arcane_relics.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+    "GuiMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

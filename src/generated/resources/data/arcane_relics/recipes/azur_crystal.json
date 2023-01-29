@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "a": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "d": {
+      "item": "minecraft:diamond"
+    },
+    "l": {
+      "item": "minecraft:lapis_lazuli"
+    }
+  },
+  "pattern": [
+    "ala",
+    "ldl",
+    "ala"
+  ],
+  "result": {
+    "count": 4,
+    "item": "arcane_relics:azur_crystal"
+  }
+}

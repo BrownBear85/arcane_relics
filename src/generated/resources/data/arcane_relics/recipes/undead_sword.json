@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "/": {
+      "item": "arcane_relics:bone_handle"
+    },
+    "i": {
+      "item": "arcane_relics:undead_ingot"
+    }
+  },
+  "pattern": [
+    "  i",
+    " i ",
+    "/  "
+  ],
+  "result": {
+    "item": "arcane_relics:undead_sword"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "a": {
+      "item": "arcane_relics:azur_crystal"
+    },
+    "b": {
+      "item": "arcane_relics:skeleton_skull"
+    },
+    "r": {
+      "item": "arcane_relics:zombie_hand"
+    }
+  },
+  "pattern": [
+    "brb",
+    "rar",
+    "brb"
+  ],
+  "result": {
+    "item": "arcane_relics:undead_crystal"
+  }
+}
