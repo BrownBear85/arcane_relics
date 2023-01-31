@@ -22,10 +22,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = ArcaneRelics.MODID)
 public class SummonUndeadWorldEvent extends WorldEvent {
+
+    public static final String ID = "summon_undead";
 
     private static final Vector3f PARTICLE_COLOR = new Vector3f(0.1F, 0.1F, 0.1F);
     private static final DustParticleOptions PARTICLE_OPTIONS = new DustParticleOptions(PARTICLE_COLOR, 1.0F);
@@ -42,7 +45,7 @@ public class SummonUndeadWorldEvent extends WorldEvent {
 
     @Override
     protected String getId() {
-        return "summon_undead";
+        return ID;
     }
 
     public SummonUndeadWorldEvent(ServerLevel level, Vec3 position, LivingEntity target) {
@@ -170,6 +173,7 @@ public class SummonUndeadWorldEvent extends WorldEvent {
         }
     }
 
+    @Nullable
     private static SummonUndeadWorldEvent fromMonster(ServerLevel serverLevel, Monster monster) {
         for (WorldEvent event : WorldEvent.getEvents(serverLevel)) {
             if (event instanceof SummonUndeadWorldEvent summonEvent &&

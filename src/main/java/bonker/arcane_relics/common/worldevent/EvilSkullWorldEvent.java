@@ -1,13 +1,24 @@
 package bonker.arcane_relics.common.worldevent;
 
+import bonker.arcane_relics.ArcaneRelics;
 import bonker.arcane_relics.common.Util;
+import bonker.arcane_relics.common.item.ARItems;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.ThrownPotion;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
@@ -15,51 +26,177 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.UUID;
 
-public class EvilSkullWorldEvent extends WorldEvent {
+@Mod.EventBusSubscriber(modid = ArcaneRelics.MODID)
+public class EvilSkullWorldEvent extends WorldEvent { //TODO: circle closes fast and player has to throw potions fast enough so that the circle doesnt close and delete the item
 
-    private static final Vector3f PARTICLE_COLOR = new Vector3f(0.25F, 0.1F, 0.1F);
-    private static final DustParticleOptions PARTICLE_OPTIONS = new DustParticleOptions(PARTICLE_COLOR, 1.0F);
+    public static final String ID = "evil_skull";
 
-    public EvilSkullWorldEvent(ServerLevel level, Vec3 position) {
-        super(level, position, 100);
+    private static final double RANGE = 1.5;
+    private static final float SIZE = 0.75F;
+
+    public enum Want {
+        HARMING(MobEffects.HARM),
+        POISON(MobEffects.POISON),
+        WEAKNESS(MobEffects.WEAKNESS),
+        SLOWNESS(MobEffects.MOVEMENT_SLOWDOWN);
+
+        private final DustParticleOptions options;
+        private final MobEffect effect;
+
+        Want(MobEffect effect) {
+            this.effect = effect;
+            Vec3 vec3 = Vec3.fromRGB24(effect.getColor());
+            this.options = new DustParticleOptions(new Vector3f((float) vec3.x, (float) vec3.y, (float) vec3.z), SIZE);
+        };
+        public DustParticleOptions getParticles() {
+            return options;
+        }
+
+        public MobEffect getEffect() {
+            return effect;
+        }
     }
 
-    EvilSkullWorldEvent(ServerLevel serverLevel, CompoundTag compoundTag) {
-        super(serverLevel, compoundTag);
+    @Nullable
+    private ItemEntity skull;
+    @Nullable
+    private UUID skullUUID;
+    private Want want;
+    private int wantsSatisfied;
+    private double radius = RANGE / 2;
+
+    public EvilSkullWorldEvent(ServerLevel level, ItemEntity skull) {
+        super(level, skull.position(), -1);
+        this.skull = skull;
+        skull.setUnlimitedLifetime();
+        skull.setNeverPickUp();
+        this.wantsSatisfied = 0;
+        this.want = randomWant();
     }
 
     @Override
     protected void tick() {
         super.tick();
-        if (age % 5 == 0) {
-            for (double d = 0.0; d < 360; d += 360.0 / 35) {
-                Vec2 point = Util.pointOnCircle(0.75, d, position.x, position.z);
-                level.sendParticles(PARTICLE_OPTIONS, point.x, position.y, point.y, 1, 0, 0, 0, 0);
+        if (skull == null) {
+            if (skullUUID != null) {
+                skull = (ItemEntity) level.getEntity(skullUUID);
             }
         }
-    }
-
-    @Override
-    protected String getId() {
-        return "evil_skull";
-    }
-
-    @SubscribeEvent
-    public static void projectileImpact(ProjectileImpactEvent event) {
-        if (event.getProjectile() instanceof ThrownPotion thrownPotion) {
-
+        if (skull != null && !skull.isRemoved()) {
+            position = skull.position();
+            blockPos = new BlockPos(position);
+            if (level.getBlockState(blockPos).is(Blocks.FIRE)) {
+                level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
+                skull.extinguishFire();
+            }
+            if (age % 5 == 0) {
+                for (double d = 0.0; d < 360; d += 360.0 / 35) {
+                    Vec2 point = Util.pointOnCircle(radius, d, position.x, position.z);
+                    level.sendParticles(want.options, point.x, position.y, point.y, 1, 0, 0, 0, 0);
+                }
+                radius -= RANGE / 2 / 55;
+                if (radius <= 0) {
+                    fail();
+                }
+            }
+        } else {
+            fail();
         }
     }
 
     private boolean handleThrownPotion(ThrownPotion thrownPotion) {
         List<MobEffectInstance> effects = PotionUtils.getMobEffects(thrownPotion.getItem());
         for (MobEffectInstance effect : effects) {
-            if (effect.getEffect() == MobEffects.HARM) {
-
+            if (effect.getEffect() == want.effect) {
+                wantsSatisfied++;
+                radius = RANGE / 2;
+                if (wantsSatisfied > 3 && level.random.nextBoolean()) {
+                    end();
+                }
+                want = randomWant();
+            } else {
+                fail();
             }
         }
         return true;
+    }
+
+    @Override
+    protected void end() {
+        if (skull != null) {
+            skull.discard();
+        }
+        EntityType.ITEM.spawn(level, null, (entity) -> {
+            entity.setItem(new ItemStack(ARItems.EVIL_SKULL.get()));
+            entity.setPos(position);
+            entity.addDeltaMovement(new Vec3(0, 0.3, 0));
+        }, BlockPos.ZERO, MobSpawnType.COMMAND, false, false);
+        super.end();
+    }
+
+    @Override
+    protected void fail() {
+        if (skull != null) {
+            skull.discard();
+        }
+        super.fail();
+    }
+
+    private Want randomWant() {
+        Want[] wants = Want.values();
+        return wants[level.random.nextInt(wants.length)];
+    }
+
+    @Override
+    protected CompoundTag save() {
+        CompoundTag tag = super.save();
+        if (skull != null) {
+            tag.putUUID("skull", skull.getUUID());
+        }
+        return tag;
+    }
+
+    EvilSkullWorldEvent(ServerLevel serverLevel, CompoundTag compoundTag) {
+        super(serverLevel, compoundTag);
+
+        skullUUID = compoundTag.getUUID("skull");
+        skull = (ItemEntity) serverLevel.getEntity(skullUUID);
+    }
+
+    @Override
+    protected String getId() {
+        return ID;
+    }
+
+    @Nullable
+    public static EvilSkullWorldEvent fromItemEntity(ServerLevel serverLevel, ItemEntity itemEntity) {
+        for (WorldEvent event : WorldEvent.getEvents(serverLevel)) {
+            if (event instanceof EvilSkullWorldEvent skullEvent &&
+                    (itemEntity.equals(skullEvent.skull) || itemEntity.getUUID().equals(skullEvent.skullUUID))) {
+                return skullEvent;
+            }
+        }
+        return null;
+    }
+
+    @SubscribeEvent
+    public static void projectileImpact(ProjectileImpactEvent event) {
+        if (event.getProjectile() instanceof ThrownPotion thrownPotion && thrownPotion.level instanceof ServerLevel serverLevel) {
+            for (EvilSkullWorldEvent worldEvent : WorldEvent.getOfClass(serverLevel, EvilSkullWorldEvent.class)) {
+                if (worldEvent.position.distanceTo(thrownPotion.position()) <= RANGE && worldEvent.handleThrownPotion(thrownPotion)) {
+                    return;
+                }
+            }
+            for (Entity entity : serverLevel.getEntities(thrownPotion, AABB.ofSize(thrownPotion.position(), RANGE, RANGE, RANGE))) {
+                if (entity instanceof ItemEntity itemEntity && itemEntity.getItem().is(ARItems.SKELETON_SKULL.get())) {
+                    new EvilSkullWorldEvent(serverLevel, itemEntity);
+                    return;
+                }
+            }
+        }
     }
 }

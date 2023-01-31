@@ -2,10 +2,14 @@ package bonker.arcane_relics.common.item.custom;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -43,6 +47,16 @@ public class DynamicItem extends Item {
         return craftingRemainder.get(stack);
     }
 
+    @Override
+    public void onDestroyed(ItemEntity pItemEntity, DamageSource pDamageSource) {
+        if (pDamageSource == DamageSource.IN_FIRE || pDamageSource == DamageSource.ON_FIRE) {
+            if (pItemEntity.getLevel().getBlockState(pItemEntity.blockPosition()).is(Blocks.FIRE)) {
+                pItemEntity.getLevel().setBlock(pItemEntity.blockPosition(), Blocks.AIR.defaultBlockState(), 3);
+                pItemEntity.extinguishFire();
+            }
+        }
+    }
+
     public static class DynamicItemBuilder {
 
         private Item.Properties properties;
@@ -65,6 +79,8 @@ public class DynamicItem extends Item {
             this.craftingRemainder = craftingRemainder;
             return this;
         }
+
+
 
         public DynamicItem build() {
             return new DynamicItem(properties, tooltip, craftingRemainder);

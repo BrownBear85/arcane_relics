@@ -12,6 +12,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class Util {
     public static ItemStack itemStack(Item item) {
         return itemStack(item, 1);

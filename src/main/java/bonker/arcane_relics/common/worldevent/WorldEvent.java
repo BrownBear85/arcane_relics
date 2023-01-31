@@ -19,8 +19,8 @@ import java.util.Map;
 public abstract class WorldEvent {
 
     protected final ServerLevel level;
-    protected final Vec3 position;
-    protected final BlockPos blockPos;
+    protected Vec3 position;
+    protected BlockPos blockPos;
     protected final int lifetime;
     protected int age = 0;
 
@@ -43,7 +43,7 @@ public abstract class WorldEvent {
     }
 
     protected void tick() {
-        if (++age >= lifetime) {
+        if (lifetime > 0 && ++age >= lifetime) {
             end();
         }
     }
@@ -70,6 +70,16 @@ public abstract class WorldEvent {
         for (WorldEvent event : events) {
             if (event.level == level) {
                 list.add(event);
+            }
+        }
+        return list;
+    }
+
+    public static <T extends WorldEvent> List<T> getOfClass(ServerLevel level, Class<T> clazz) {
+        List<T> list = new ArrayList<>();
+        for (WorldEvent event : events) {
+            if (event.getClass() == clazz && event.level == level) {
+                list.add(clazz.cast(event));
             }
         }
         return list;
@@ -114,8 +124,8 @@ public abstract class WorldEvent {
     private static final Map<String, WorldEventCreator> WORLD_EVENT_CREATORS = new HashMap<>();
 
     public static void loadWorldEventCreators() {
-        WORLD_EVENT_CREATORS.put("summon_undead", SummonUndeadWorldEvent::new);
-        WORLD_EVENT_CREATORS.put("evil_skull", EvilSkullWorldEvent::new);
+        WORLD_EVENT_CREATORS.put(SummonUndeadWorldEvent.ID, SummonUndeadWorldEvent::new);
+        WORLD_EVENT_CREATORS.put(EvilSkullWorldEvent.ID, EvilSkullWorldEvent::new);
     }
 
     @FunctionalInterface

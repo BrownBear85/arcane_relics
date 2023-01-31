@@ -78,4 +78,9 @@ public class UndeadSwordItem extends CastingItem implements ICastOnEntityItem, I
         else
             return System.currentTimeMillis() % 2000 <= 500 ? WHITE : GREEN;
     }
+
+    @Override
+    public boolean onDroppedByPlayer(ItemStack item, Player player) {
+        return super.onDroppedByPlayer(item, player);
+    }
 }

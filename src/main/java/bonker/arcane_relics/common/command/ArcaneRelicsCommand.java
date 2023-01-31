@@ -1,6 +1,5 @@
 package bonker.arcane_relics.common.command;
 
-import bonker.arcane_relics.common.worldevent.EvilSkullWorldEvent;
 import bonker.arcane_relics.common.worldevent.WorldEvent;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -25,7 +24,6 @@ public class ArcaneRelicsCommand {
         ServerPlayer player = context.getSource().getPlayerOrException();
         switch (context.getArgument("parameter", Parameter.class)) {
             case clear_world_events -> WorldEvent.clearEvents(level);
-            case evil_skull_test -> new EvilSkullWorldEvent(level, player.position());
         }
         return 0;
     }
