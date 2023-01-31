@@ -16,8 +16,11 @@ public class ARSoundDefinitionProvider extends SoundDefinitionsProvider {
     @Override
     public void registerSounds() {
         createSound("rumble");
-        createMultiSound("undead_cast", "undead_cast_0", "undead_cast_1", "undead_cast_2", "undead_cast_3");
+        createEasyMultiSound("undead_cast", 4);
         createSound("monster_disappear");
+        createSound("spooky_breath");
+        createEasyMultiSound("evil_impact", 6);
+        createEasyMultiSound("evil_whoosh", 5);
     }
 
     public void createSound(String name) {
@@ -32,5 +35,13 @@ public class ARSoundDefinitionProvider extends SoundDefinitionsProvider {
             definition.with(SoundDefinition.Sound.sound(new ResourceLocation(ArcaneRelics.MODID, sound), SoundDefinition.SoundType.SOUND));
         }
         add(name, definition.subtitle("subtitles.arcane_relics." + name));
+    }
+
+    public void createEasyMultiSound(String name, int numSounds) {
+        String[] sounds = new String[numSounds];
+        for (int i = 0; i < numSounds; i++) {
+            sounds[i] = name + "/" + name + "_" + i;
+        }
+        createMultiSound(name, sounds);
     }
 }

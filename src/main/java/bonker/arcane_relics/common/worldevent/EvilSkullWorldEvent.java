@@ -3,10 +3,12 @@ package bonker.arcane_relics.common.worldevent;
 import bonker.arcane_relics.ArcaneRelics;
 import bonker.arcane_relics.common.Util;
 import bonker.arcane_relics.common.item.ARItems;
+import bonker.arcane_relics.common.sound.ARSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -49,15 +51,7 @@ public class EvilSkullWorldEvent extends WorldEvent { //TODO: circle closes fast
 
         Want(MobEffect effect) {
             this.effect = effect;
-            Vec3 vec3 = Vec3.fromRGB24(effect.getColor());
-            this.options = new DustParticleOptions(new Vector3f((float) vec3.x, (float) vec3.y, (float) vec3.z), SIZE);
-        };
-        public DustParticleOptions getParticles() {
-            return options;
-        }
-
-        public MobEffect getEffect() {
-            return effect;
+            this.options = new DustParticleOptions(Vec3.fromRGB24(effect.getColor()).toVector3f(), SIZE);
         }
     }
 
@@ -68,6 +62,7 @@ public class EvilSkullWorldEvent extends WorldEvent { //TODO: circle closes fast
     private Want want;
     private int wantsSatisfied;
     private double radius = RANGE / 2;
+    private int endTime = -1;
 
     public EvilSkullWorldEvent(ServerLevel level, ItemEntity skull) {
         super(level, skull.position(), -1);
@@ -93,7 +88,9 @@ public class EvilSkullWorldEvent extends WorldEvent { //TODO: circle closes fast
                 level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
                 skull.extinguishFire();
             }
-            if (age % 5 == 0) {
+            if (endTime > 0 && --endTime == 0) {
+                end();
+            } else if (age % 5 == 0) {
                 for (double d = 0.0; d < 360; d += 360.0 / 35) {
                     Vec2 point = Util.pointOnCircle(radius, d, position.x, position.z);
                     level.sendParticles(want.options, point.x, position.y, point.y, 1, 0, 0, 0, 0);
@@ -116,8 +113,11 @@ public class EvilSkullWorldEvent extends WorldEvent { //TODO: circle closes fast
                 radius = RANGE / 2;
                 if (wantsSatisfied > 3 && level.random.nextBoolean()) {
                     end();
+                    level.playSound(null, position.x, position.y, position.z, ARSounds.SPOOKY_BREATH.get(), SoundSource.MASTER, 1.0F, 1.0F);
+                } else {
+                    level.playSound(null, position.x, position.y, position.z, ARSounds.EVIL_WHOOSH.get(), SoundSource.MASTER, 1.0F, 1.0F);
+                    want = randomWant();
                 }
-                want = randomWant();
             } else {
                 fail();
             }
@@ -143,6 +143,7 @@ public class EvilSkullWorldEvent extends WorldEvent { //TODO: circle closes fast
         if (skull != null) {
             skull.discard();
         }
+        level.playSound(null, position.x, position.y, position.z, ARSounds.EVIL_IMPACT.get(), SoundSource.MASTER, 1.0F, 1.0F);
         super.fail();
     }
 

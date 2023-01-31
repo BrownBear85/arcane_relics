@@ -1,4 +1,25 @@
 {
+  "evil_impact": {
+    "sounds": [
+      "arcane_relics:evil_impact/evil_impact_0",
+      "arcane_relics:evil_impact/evil_impact_1",
+      "arcane_relics:evil_impact/evil_impact_2",
+      "arcane_relics:evil_impact/evil_impact_3",
+      "arcane_relics:evil_impact/evil_impact_4",
+      "arcane_relics:evil_impact/evil_impact_5"
+    ],
+    "subtitle": "subtitles.arcane_relics.evil_impact"
+  },
+  "evil_whoosh": {
+    "sounds": [
+      "arcane_relics:evil_whoosh/evil_whoosh_0",
+      "arcane_relics:evil_whoosh/evil_whoosh_1",
+      "arcane_relics:evil_whoosh/evil_whoosh_2",
+      "arcane_relics:evil_whoosh/evil_whoosh_3",
+      "arcane_relics:evil_whoosh/evil_whoosh_4"
+    ],
+    "subtitle": "subtitles.arcane_relics.evil_whoosh"
+  },
   "monster_disappear": {
     "sounds": [
       "arcane_relics:monster_disappear"
@@ -11,12 +32,18 @@
     ],
     "subtitle": "subtitles.arcane_relics.rumble"
   },
+  "spooky_breath": {
+    "sounds": [
+      "arcane_relics:spooky_breath"
+    ],
+    "subtitle": "subtitles.arcane_relics.spooky_breath"
+  },
   "undead_cast": {
     "sounds": [
-      "arcane_relics:undead_cast_0",
-      "arcane_relics:undead_cast_1",
-      "arcane_relics:undead_cast_2",
-      "arcane_relics:undead_cast_3"
+      "arcane_relics:undead_cast/undead_cast_0",
+      "arcane_relics:undead_cast/undead_cast_1",
+      "arcane_relics:undead_cast/undead_cast_2",
+      "arcane_relics:undead_cast/undead_cast_3"
     ],
     "subtitle": "subtitles.arcane_relics.undead_cast"
   }
