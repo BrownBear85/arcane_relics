@@ -1,7 +1,10 @@
 package bonker.arcane_relics.common;
 
+import com.google.common.collect.ImmutableList;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.serialization.Codec;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -11,9 +14,9 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class Util {
@@ -82,4 +85,57 @@ public class Util {
     public static Vec2 pointOnCircle(double radius, double angleDegrees, double originX, double originY) {
         return new Vec2((float) (originX + radius * (float) Math.cos(Math.toRadians(Mth.wrapDegrees(angleDegrees)))), (float) (originY + radius * (float) Math.sin(Math.toRadians(Mth.wrapDegrees(angleDegrees)))));
     }
+
+    public static double distanceBetween(Vec3 start, Vec3 end) {
+        return Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - end.x, 2) + Math.pow(end.z - start.z, 2));
+    }
+
+    // from: https://math.stackexchange.com/questions/1735994/position-of-point-between-2-points-in-3d-space
+    public static Vec3 pointBetween(Vec3 start, Vec3 end, double distance) {
+        double s = distance / distanceBetween(start, end);
+        return new Vec3(start.x + s * (end.x - start.x), start.y + s * (end.y - start.y), start.z + s * (end.z - start.z));
+    }
+
+    public static List<Vec3> pointsOnLine(Vec3 start, Vec3 end, int points) {
+        ArrayList<Vec3> list = new ArrayList<>(points);
+
+        double step = distanceBetween(start, end) / points;
+        for (int i = 0; i < points; i++) {
+            list.add(pointBetween(start, end, step * i));
+        }
+        return list;
+    }
+
+    public static Vector3f readVector3f(FriendlyByteBuf pBuffer) {
+        return new Vector3f(pBuffer.readFloat(), pBuffer.readFloat(), pBuffer.readFloat());
+    }
+
+    public static Vec3 readVec3(FriendlyByteBuf pBuffer) {
+        return new Vec3(pBuffer.readDouble(), pBuffer.readDouble(), pBuffer.readDouble());
+    }
+
+    public static Vector3f readVector3f(StringReader pReader) throws CommandSyntaxException {
+        pReader.expect(' ');
+        float f = pReader.readFloat();
+        pReader.expect(' ');
+        float f1 = pReader.readFloat();
+        pReader.expect(' ');
+        float f2 = pReader.readFloat();
+        return new Vector3f(f, f1, f2);
+    }
+
+    public static Vec3 readVec3(StringReader pReader) throws CommandSyntaxException {
+        pReader.expect(' ');
+        double x = pReader.readDouble();
+        pReader.expect(' ');
+        double y = pReader.readDouble();
+        pReader.expect(' ');
+        double z = pReader.readDouble();
+        return new Vec3(x, y, z);
+    }
+
+    public static final Codec<Vec3> VEC3_CODEC = Codec.DOUBLE.listOf().comapFlatMap(
+            (list) -> net.minecraft.Util.fixedSize(list, 3).map(
+                    (list1) -> new Vec3(list.get(0), list.get(1), list.get(2))),
+            (vec3) -> ImmutableList.of(vec3.x(), vec3.y(), vec3.z()));
 }

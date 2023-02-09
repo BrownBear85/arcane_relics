@@ -1,5 +1,6 @@
 package bonker.arcane_relics;
 
+import bonker.arcane_relics.client.particle.ARParticles;
 import bonker.arcane_relics.common.item.ARItems;
 import bonker.arcane_relics.common.loot.ARGlobalLootModifiers;
 import bonker.arcane_relics.common.sound.ARSounds;
@@ -26,6 +27,8 @@ public class ArcaneRelics {
         ARSounds.SOUND_EVENTS.register(bus);
 
         ARGlobalLootModifiers.GLOBAL_LOOT_MODIFIER_SERIALIZERS.register(bus);
+
+        ARParticles.PARTICLE_TYPES.register(bus);
 
         WorldEvent.loadWorldEventCreators();
     }

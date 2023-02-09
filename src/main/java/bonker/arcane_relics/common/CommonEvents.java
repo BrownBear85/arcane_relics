@@ -1,6 +1,8 @@
 package bonker.arcane_relics.common;
 
 import bonker.arcane_relics.ArcaneRelics;
+import bonker.arcane_relics.client.particle.ARParticles;
+import bonker.arcane_relics.client.particle.EvilParticle;
 import bonker.arcane_relics.common.command.ArcaneRelicsCommand;
 import bonker.arcane_relics.common.item.ARItems;
 import bonker.arcane_relics.common.networking.ARNetworking;
@@ -19,6 +21,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -71,6 +74,11 @@ public class CommonEvents {
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event) {
             ARNetworking.register();
+        }
+
+        @SubscribeEvent
+        public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
+            event.register(ARParticles.EVIL_PARTICLE.get(), EvilParticle.Provider::new);
         }
 
         @SubscribeEvent
