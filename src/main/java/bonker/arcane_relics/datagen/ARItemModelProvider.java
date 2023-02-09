@@ -37,7 +37,6 @@ public class ARItemModelProvider extends ItemModelProvider {
         basicItem("skeleton_skull");
         basicItem("netherrack_dust");
         basicItem("fiery_powder");
-        basicItem("evil_skull");
         basicItem("fiery_skull");
         handheld("bronze_hammer");
     }
