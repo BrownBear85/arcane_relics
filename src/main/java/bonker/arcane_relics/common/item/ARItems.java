@@ -2,10 +2,7 @@ package bonker.arcane_relics.common.item;
 
 import bonker.arcane_relics.ArcaneRelics;
 import bonker.arcane_relics.common.Util;
-import bonker.arcane_relics.common.item.custom.AllayMilkItem;
-import bonker.arcane_relics.common.item.custom.DynamicItem;
-import bonker.arcane_relics.common.item.custom.SlayerItem;
-import bonker.arcane_relics.common.item.custom.UndeadSwordItem;
+import bonker.arcane_relics.common.item.custom.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -62,13 +59,16 @@ public class ARItems {
     public static final RegistryObject<Item> COPPER_NUGGET = ITEMS.register("copper_nugget", () -> new Item(properties()));
     public static final RegistryObject<Item> NETHERRACK_DUST = ITEMS.register("netherrack_dust", () -> new Item(properties()));
     public static final RegistryObject<Item> FIERY_POWDER = ITEMS.register("fiery_powder", () -> new Item(properties()));
-    public static final RegistryObject<Item> EVIL_SKULL = ITEMS.register("evil_skull", () -> new Item(properties()));
     public static final RegistryObject<Item> FIERY_SKULL = ITEMS.register("fiery_skull", () -> new Item(properties()));
 
     /* mob drops */
 
     public static final RegistryObject<Item> SKELETON_SKULL = ITEMS.register("skeleton_skull", () -> DynamicItem.create(properties()).tooltip("skeleton_skull").build());
     public static final RegistryObject<Item> ZOMBIE_HAND = ITEMS.register("zombie_hand", () -> DynamicItem.create(properties()).tooltip("zombie_hand").build());
+
+    /* evil */
+
+    public static final RegistryObject<Item> EVIL_SKULL = ITEMS.register("evil_skull", () -> new EvilSkullItem(properties().stacksTo(1)));
 
 
     public static Item.Properties properties() {
