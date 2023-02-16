@@ -1,12 +1,10 @@
 package bonker.arcane_relics.common;
 
 import bonker.arcane_relics.ArcaneRelics;
-import bonker.arcane_relics.client.particle.ARParticles;
-import bonker.arcane_relics.client.particle.EvilParticle;
 import bonker.arcane_relics.common.command.ArcaneRelicsCommand;
 import bonker.arcane_relics.common.item.ARItems;
 import bonker.arcane_relics.common.networking.ARNetworking;
-import bonker.arcane_relics.common.worldevent.EvilSkullWorldEvent;
+import bonker.arcane_relics.common.worldevent.EvilSkullCraftingWorldEvent;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -21,7 +19,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -41,8 +38,8 @@ public class CommonEvents {
         public static void playerRightClickedBlock(PlayerInteractEvent.RightClickBlock event) {
             if (event.getLevel() instanceof ServerLevel serverLevel && event.getItemStack().getItem() instanceof FlintAndSteelItem) {
                 for (Entity entity : serverLevel.getEntities(null, new AABB(event.getPos().relative(event.getFace() == null ? Direction.UP : event.getFace())))) {
-                    if (entity instanceof ItemEntity itemEntity && itemEntity.getItem().is(ARItems.SKELETON_SKULL.get()) && EvilSkullWorldEvent.fromItemEntity(serverLevel, itemEntity) == null) {
-                        new EvilSkullWorldEvent(serverLevel, itemEntity);
+                    if (entity instanceof ItemEntity itemEntity && itemEntity.getItem().is(ARItems.SKELETON_SKULL.get()) && EvilSkullCraftingWorldEvent.fromItemEntity(serverLevel, itemEntity) == null) {
+                        new EvilSkullCraftingWorldEvent(serverLevel, itemEntity);
                     }
                 }
             }
@@ -74,11 +71,6 @@ public class CommonEvents {
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event) {
             ARNetworking.register();
-        }
-
-        @SubscribeEvent
-        public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
-            event.register(ARParticles.EVIL_PARTICLE.get(), EvilParticle.Provider::new);
         }
 
         @SubscribeEvent
