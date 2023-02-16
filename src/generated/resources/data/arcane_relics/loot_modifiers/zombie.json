@@ -1,6 +1,6 @@
 {
   "type": "arcane_relics:add_item",
-  "chance": 0.15,
+  "chance": 0.12,
   "conditions": [
     {
       "condition": "forge:loot_table_id",

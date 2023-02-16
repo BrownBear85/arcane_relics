@@ -20,12 +20,12 @@ public class ARLootProvider {
         protected void start() {
             add("zombie", new AddItemModifier(
                     new LootItemCondition[] { LootTableIdCondition.builder(new ResourceLocation("entities/zombie")).build() },
-                    ARItems.ZOMBIE_HAND.get(), 0.15
+                    ARItems.ZOMBIE_HAND.get(), 0.12
             ));
 
             add("skeleton", new AddItemModifier(
                     new LootItemCondition[] { LootTableIdCondition.builder(new ResourceLocation("entities/skeleton")).build() },
-                    ARItems.SKELETON_SKULL.get(), 0.15
+                    ARItems.SKELETON_SKULL.get(), 0.12
             ));
         }
     }
