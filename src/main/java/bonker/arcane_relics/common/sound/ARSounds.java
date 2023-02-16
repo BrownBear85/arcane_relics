@@ -17,6 +17,8 @@ public class ARSounds {
     public static final RegistryObject<SoundEvent> SPOOKY_BREATH = registerSoundEvent("spooky_breath");
     public static final RegistryObject<SoundEvent> EVIL_IMPACT = registerSoundEvent("evil_impact");
     public static final RegistryObject<SoundEvent> EVIL_WHOOSH = registerSoundEvent("evil_whoosh");
+    public static final RegistryObject<SoundEvent> EVIL_LOOP = registerSoundEvent("evil_loop");
+    public static final RegistryObject<SoundEvent> EVIL_CAST = registerSoundEvent("evil_cast");
 
 
     private static RegistryObject<SoundEvent> registerSoundEvent(String name) {

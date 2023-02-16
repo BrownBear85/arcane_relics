@@ -27,6 +27,12 @@ public class ARNetworking {
                 .encoder(UndeadSwordC2SPacket::encode)
                 .consumerMainThread(UndeadSwordC2SPacket::handle)
                 .add();
+
+        INSTANCE.messageBuilder(EvilSkullC2SPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(EvilSkullC2SPacket::new)
+                .encoder(EvilSkullC2SPacket::encode)
+                .consumerMainThread(EvilSkullC2SPacket::handle)
+                .add();
     }
 
     public static <MSG> void sendToServer(MSG message) {

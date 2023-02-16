@@ -26,16 +26,15 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = ArcaneRelics.MODID)
-public class EvilSkullWorldEvent extends WorldEvent { //TODO: circle closes fast and player has to throw potions fast enough so that the circle doesnt close and delete the item
+public class EvilSkullCraftingWorldEvent extends WorldEvent {
 
-    public static final String ID = "evil_skull";
+    public static final String ID = "evil_skull_crafting";
 
     private static final double RANGE = 1.5;
     private static final float SIZE = 0.75F;
@@ -64,13 +63,15 @@ public class EvilSkullWorldEvent extends WorldEvent { //TODO: circle closes fast
     private double radius = RANGE / 2;
     private int endTime = -1;
 
-    public EvilSkullWorldEvent(ServerLevel level, ItemEntity skull) {
+    public EvilSkullCraftingWorldEvent(ServerLevel level, ItemEntity skull) {
         super(level, skull.position(), -1);
         this.skull = skull;
         skull.setUnlimitedLifetime();
         skull.setNeverPickUp();
         this.wantsSatisfied = 0;
         this.want = randomWant();
+
+        level.playSound(null, position.x, position.y, position.z, ARSounds.EVIL_WHOOSH.get(), SoundSource.MASTER, 1.0F, 1.0F);
     }
 
     @Override
@@ -126,7 +127,7 @@ public class EvilSkullWorldEvent extends WorldEvent { //TODO: circle closes fast
     }
 
     @Override
-    protected void end() {
+    public void end() {
         if (skull != null) {
             skull.discard();
         }
@@ -139,7 +140,7 @@ public class EvilSkullWorldEvent extends WorldEvent { //TODO: circle closes fast
     }
 
     @Override
-    protected void fail() {
+    public void fail() {
         if (skull != null) {
             skull.discard();
         }
@@ -161,7 +162,7 @@ public class EvilSkullWorldEvent extends WorldEvent { //TODO: circle closes fast
         return tag;
     }
 
-    EvilSkullWorldEvent(ServerLevel serverLevel, CompoundTag compoundTag) {
+    EvilSkullCraftingWorldEvent(ServerLevel serverLevel, CompoundTag compoundTag) {
         super(serverLevel, compoundTag);
 
         skullUUID = compoundTag.getUUID("skull");
@@ -174,9 +175,9 @@ public class EvilSkullWorldEvent extends WorldEvent { //TODO: circle closes fast
     }
 
     @Nullable
-    public static EvilSkullWorldEvent fromItemEntity(ServerLevel serverLevel, ItemEntity itemEntity) {
+    public static EvilSkullCraftingWorldEvent fromItemEntity(ServerLevel serverLevel, ItemEntity itemEntity) {
         for (WorldEvent event : WorldEvent.getEvents(serverLevel)) {
-            if (event instanceof EvilSkullWorldEvent skullEvent &&
+            if (event instanceof EvilSkullCraftingWorldEvent skullEvent &&
                     (itemEntity.equals(skullEvent.skull) || itemEntity.getUUID().equals(skullEvent.skullUUID))) {
                 return skullEvent;
             }
@@ -187,17 +188,17 @@ public class EvilSkullWorldEvent extends WorldEvent { //TODO: circle closes fast
     @SubscribeEvent
     public static void projectileImpact(ProjectileImpactEvent event) {
         if (event.getProjectile() instanceof ThrownPotion thrownPotion && thrownPotion.level instanceof ServerLevel serverLevel) {
-            for (EvilSkullWorldEvent worldEvent : WorldEvent.getOfClass(serverLevel, EvilSkullWorldEvent.class)) {
+            for (EvilSkullCraftingWorldEvent worldEvent : WorldEvent.getOfClass(serverLevel, EvilSkullCraftingWorldEvent.class)) {
                 if (worldEvent.position.distanceTo(thrownPotion.position()) <= RANGE && worldEvent.handleThrownPotion(thrownPotion)) {
                     return;
                 }
             }
-            for (Entity entity : serverLevel.getEntities(thrownPotion, AABB.ofSize(thrownPotion.position(), RANGE, RANGE, RANGE))) {
-                if (entity instanceof ItemEntity itemEntity && itemEntity.getItem().is(ARItems.SKELETON_SKULL.get())) {
-                    new EvilSkullWorldEvent(serverLevel, itemEntity);
-                    return;
-                }
-            }
+//            for (Entity entity : serverLevel.getEntities(thrownPotion, AABB.ofSize(thrownPotion.position(), RANGE, RANGE, RANGE))) {
+//                if (entity instanceof ItemEntity itemEntity && itemEntity.getItem().is(ARItems.SKELETON_SKULL.get())) {
+//                    new EvilSkullCraftingWorldEvent(serverLevel, itemEntity);
+//                    return;
+//                }
+//            }
         }
     }
 }

@@ -21,11 +21,18 @@ public class ARSoundDefinitionProvider extends SoundDefinitionsProvider {
         createSound("spooky_breath");
         createEasyMultiSound("evil_impact", 6);
         createEasyMultiSound("evil_whoosh", 5);
+        createSound("evil_loop");
+        createSound("evil_cast");
     }
 
     public void createSound(String name) {
         add(name, SoundDefinition.definition()
                 .subtitle("subtitles.arcane_relics." + name)
+                .with(SoundDefinition.Sound.sound(new ResourceLocation(ArcaneRelics.MODID, name), SoundDefinition.SoundType.SOUND)));
+    }
+
+    public void createSoundNoSubtitle(String name) {
+        add(name, SoundDefinition.definition()
                 .with(SoundDefinition.Sound.sound(new ResourceLocation(ArcaneRelics.MODID, name), SoundDefinition.SoundType.SOUND)));
     }
 

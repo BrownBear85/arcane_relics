@@ -4,20 +4,34 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.commands.arguments.selector.EntitySelectorParser;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.EntityGetter;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 public class Util {
     public static ItemStack itemStack(Item item) {
@@ -115,7 +129,6 @@ public class Util {
     }
 
     public static Vector3f readVector3f(StringReader pReader) throws CommandSyntaxException {
-        pReader.expect(' ');
         float f = pReader.readFloat();
         pReader.expect(' ');
         float f1 = pReader.readFloat();
@@ -125,7 +138,6 @@ public class Util {
     }
 
     public static Vec3 readVec3(StringReader pReader) throws CommandSyntaxException {
-        pReader.expect(' ');
         double x = pReader.readDouble();
         pReader.expect(' ');
         double y = pReader.readDouble();
@@ -138,4 +150,68 @@ public class Util {
             (list) -> net.minecraft.Util.fixedSize(list, 3).map(
                     (list1) -> new Vec3(list.get(0), list.get(1), list.get(2))),
             (vec3) -> ImmutableList.of(vec3.x(), vec3.y(), vec3.z()));
+
+    public static <T extends Entity> List<T> nearestEntities(Vec3 pPos, List<T> pEntities, int limit) {
+        BiConsumer<Vec3, List<? extends Entity>> order = EntitySelectorParser.ORDER_NEAREST;
+
+        if (pEntities.size() > 1) {
+            order.accept(pPos, pEntities);
+        }
+
+        return pEntities.subList(0, Math.min(limit, pEntities.size()));
+    }
+
+    public static Optional<Entity> getTargetedEntity(LivingEntity entity, double range, double assist) {
+        for (double dist = 0; dist < range; dist += 0.2) {
+            Vec3 vec3 = entity.getEyePosition().add(entity.getLookAngle().multiply(dist, dist, dist));
+            Entity target = getNearestEntity(entity.level, Entity.class, e -> true, null, vec3.x, vec3.y, vec3.z, AABB.ofSize(vec3, assist, assist, assist));
+            if (target != null && target != entity) {
+                return Optional.of(target);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public static <T extends Entity> Optional<T> getTargetedEntity(LivingEntity entity, Class<? extends T> clazz, Predicate<Entity> predicate, double range, double assist) {
+        for (double dist = 0; dist < range; dist += 0.2) {
+            Vec3 vec3 = entity.getEyePosition().add(entity.getLookAngle().multiply(dist, dist, dist));
+            T target = getNearestEntity(entity.level, clazz, predicate, null, vec3.x, vec3.y, vec3.z, AABB.ofSize(vec3, assist, assist, assist));
+            if (target != null && target != entity) {
+                return Optional.of(target);
+            }
+        }
+        return Optional.empty();
+    }
+
+    // from EntityGetter.java, tweaked to allow for entity classes above LivingEntity
+    // and replaced the TargetingConditions with an Entity Predicate
+    @Nullable
+    public static <T extends Entity> T getNearestEntity(EntityGetter getter, Class<? extends T> pEntityClazz, Predicate<Entity> pConditions, @Nullable LivingEntity pTarget, double pX, double pY, double pZ, AABB pBoundingBox) {
+        return getNearestEntity(getter.getEntitiesOfClass(pEntityClazz, pBoundingBox, entity -> true), pConditions, pTarget, pX, pY, pZ);
+    }
+
+    // from EntityGetter.java, tweaked to allow for entity classes above LivingEntity
+    // and replaced the TargetingConditions with an Entity Predicate
+    @Nullable
+    public static <T extends Entity> T getNearestEntity(List<? extends T> pEntities, Predicate<Entity> pPredicate, @Nullable LivingEntity pTarget, double pX, double pY, double pZ) {
+        double d0 = -1.0D;
+        T t = null;
+
+        for(T t1 : pEntities) {
+            if (t1 != pTarget && pPredicate.test(t1)) {
+                double d1 = t1.distanceToSqr(pX, pY, pZ);
+                if (d0 == -1.0D || d1 < d0) {
+                    d0 = d1;
+                    t = t1;
+                }
+            }
+        }
+
+        return t;
+    }
+
+    public static final Codec<ItemStack> ITEM_STACK_CODEC = RecordCodecBuilder.create((inst) -> inst.group(
+            ForgeRegistries.ITEMS.getCodec().fieldOf("item").forGetter(ItemStack::getItem),
+            Codec.INT.fieldOf("count").forGetter(ItemStack::getCount))
+            .apply(inst, ItemStack::new));
 }

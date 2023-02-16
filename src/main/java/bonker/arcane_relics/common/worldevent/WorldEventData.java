@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class WorldEventData extends SavedData {
 
+    public static final CompoundTag NO_SAVE = new CompoundTag();
+
     public final ServerLevel level;
 
     public static final Object2ObjectArrayMap<ServerLevel, WorldEventData> MAP = new Object2ObjectArrayMap<>();
@@ -43,7 +45,11 @@ public class WorldEventData extends SavedData {
     public @NotNull CompoundTag save(@NotNull CompoundTag pCompoundTag) {
         ListTag list = new ListTag();
         for (WorldEvent event : WorldEvent.getEvents(level)) {
-            list.add(event.save());
+            CompoundTag data = event.save();
+            if (data == NO_SAVE) {
+                continue;
+            }
+            list.add(data);
         }
         pCompoundTag.put("events", list);
         return pCompoundTag;

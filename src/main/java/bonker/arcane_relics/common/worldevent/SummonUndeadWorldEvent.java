@@ -122,7 +122,7 @@ public class SummonUndeadWorldEvent extends WorldEvent {
     }
 
     @Override
-    protected void end() {
+    public void end() {
         super.end();
 
         if (monster != null) {

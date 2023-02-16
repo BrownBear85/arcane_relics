@@ -1,12 +1,22 @@
 package bonker.arcane_relics.datagen;
 
+import bonker.arcane_relics.ArcaneRelics;
 import bonker.arcane_relics.common.item.ARItems;
+import bonker.arcane_relics.common.recipe.ARRecipes;
+import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -18,6 +28,11 @@ public class ARCraftingRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes(Consumer<FinishedRecipe> pWriter) {
+
+        EvilSkullRecipeBuilder.name("test")
+                .input(Ingredient.of(Items.STICK))
+                .output(new ItemStack(Items.LEATHER, 5)).save(pWriter);
+
         // azur crystal
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ARItems.AZUR_CRYSTAL.get(), 4)
                 .define('d', Items.DIAMOND).define('l', Items.LAPIS_LAZULI).define('a', Items.AMETHYST_SHARD)

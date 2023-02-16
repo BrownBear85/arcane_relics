@@ -18,6 +18,11 @@ public class ARLanguageProvider extends LanguageProvider {
         add("subtitles.arcane_relics.rumble", "Something Rumbles");
         add("subtitles.arcane_relics.undead_cast", "Spell cast");
         add("subtitles.arcane_relics.monster_disappear", "Undead creature returns");
+        add("subtitles.arcane_relics.spooky_breath", "Evil spell completes");
+        add("subtitles.arcane_relics.evil_impact", "Evil spell fails");
+        add("subtitles.arcane_relics.evil_whoosh", "Evil spell advances");
+        add("subtitles.arcane_relics.evil_loop", "Evil spell charges");
+        add("subtitles.arcane_relics.evil_cast", "Evil spell is cast");
 
         add("item.arcane_relics.undead_sword.fail", "Can't summon here");
         add("item.arcane_relics.undead_crystal.tooltip", "Kill undead mobs:");

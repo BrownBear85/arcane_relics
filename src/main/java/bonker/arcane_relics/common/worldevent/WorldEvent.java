@@ -57,11 +57,11 @@ public abstract class WorldEvent {
         return tag;
     }
 
-    protected void end() {
+    public void end() {
         events.remove(this);
     }
 
-    protected void fail() {
+    public void fail() {
         events.remove(this);
     }
 
@@ -125,7 +125,7 @@ public abstract class WorldEvent {
 
     public static void loadWorldEventCreators() {
         WORLD_EVENT_CREATORS.put(SummonUndeadWorldEvent.ID, SummonUndeadWorldEvent::new);
-        WORLD_EVENT_CREATORS.put(EvilSkullWorldEvent.ID, EvilSkullWorldEvent::new);
+        WORLD_EVENT_CREATORS.put(EvilSkullCraftingWorldEvent.ID, EvilSkullCraftingWorldEvent::new);
     }
 
     @FunctionalInterface

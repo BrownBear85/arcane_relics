@@ -23,7 +23,12 @@
   "item.arcane_relics.zombie_hand": "Zombie Hand",
   "item.arcane_relics.zombie_hand.tooltip": "A rare Zombie drop",
   "item_group.arcane_relics.tab": "Arcane Relics",
+  "subtitles.arcane_relics.evil_cast": "Evil spell is cast",
+  "subtitles.arcane_relics.evil_impact": "Evil spell fails",
+  "subtitles.arcane_relics.evil_loop": "Evil spell charges",
+  "subtitles.arcane_relics.evil_whoosh": "Evil spell advances",
   "subtitles.arcane_relics.monster_disappear": "Undead creature returns",
   "subtitles.arcane_relics.rumble": "Something Rumbles",
+  "subtitles.arcane_relics.spooky_breath": "Evil spell completes",
   "subtitles.arcane_relics.undead_cast": "Spell cast"
 }

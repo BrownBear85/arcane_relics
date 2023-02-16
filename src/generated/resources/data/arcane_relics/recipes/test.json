@@ -1,0 +1,10 @@
+{
+  "type": "arcane_relics:evil_skull",
+  "input": {
+    "item": "minecraft:stick"
+  },
+  "output": {
+    "count": 5,
+    "item": "minecraft:leather"
+  }
+}

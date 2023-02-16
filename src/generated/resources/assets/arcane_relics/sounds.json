@@ -1,4 +1,10 @@
 {
+  "evil_cast": {
+    "sounds": [
+      "arcane_relics:evil_cast"
+    ],
+    "subtitle": "subtitles.arcane_relics.evil_cast"
+  },
   "evil_impact": {
     "sounds": [
       "arcane_relics:evil_impact/evil_impact_0",
@@ -9,6 +15,12 @@
       "arcane_relics:evil_impact/evil_impact_5"
     ],
     "subtitle": "subtitles.arcane_relics.evil_impact"
+  },
+  "evil_loop": {
+    "sounds": [
+      "arcane_relics:evil_loop"
+    ],
+    "subtitle": "subtitles.arcane_relics.evil_loop"
   },
   "evil_whoosh": {
     "sounds": [
