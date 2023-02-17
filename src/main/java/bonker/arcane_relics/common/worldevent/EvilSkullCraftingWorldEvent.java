@@ -4,6 +4,7 @@ import bonker.arcane_relics.ArcaneRelics;
 import bonker.arcane_relics.common.Util;
 import bonker.arcane_relics.common.item.ARItems;
 import bonker.arcane_relics.common.sound.ARSounds;
+import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
@@ -12,7 +13,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -20,7 +20,6 @@ import net.minecraft.world.entity.projectile.ThrownPotion;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
@@ -28,8 +27,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Mod.EventBusSubscriber(modid = ArcaneRelics.MODID)
 public class EvilSkullCraftingWorldEvent extends WorldEvent {
@@ -39,26 +37,15 @@ public class EvilSkullCraftingWorldEvent extends WorldEvent {
     private static final double RANGE = 1.5;
     private static final float SIZE = 0.75F;
 
-    public enum Want {
-        HARMING(MobEffects.HARM),
-        POISON(MobEffects.POISON),
-        WEAKNESS(MobEffects.WEAKNESS),
-        SLOWNESS(MobEffects.MOVEMENT_SLOWDOWN);
-
-        private final DustParticleOptions options;
-        private final MobEffect effect;
-
-        Want(MobEffect effect) {
-            this.effect = effect;
-            this.options = new DustParticleOptions(Vec3.fromRGB24(effect.getColor()).toVector3f(), SIZE);
-        }
-    }
+    public static final Map<MobEffect, DustParticleOptions> WANTS = Maps.toMap(
+            Set.of(MobEffects.HARM, MobEffects.POISON, MobEffects.WEAKNESS, MobEffects.MOVEMENT_SLOWDOWN),
+            (effect) -> new DustParticleOptions(Vec3.fromRGB24(effect.getColor()).toVector3f(), SIZE));
 
     @Nullable
     private ItemEntity skull;
     @Nullable
     private UUID skullUUID;
-    private Want want;
+    private MobEffect want;
     private int wantsSatisfied;
     private double radius = RANGE / 2;
     private int endTime = -1;
@@ -94,9 +81,9 @@ public class EvilSkullCraftingWorldEvent extends WorldEvent {
             } else if (age % 5 == 0) {
                 for (double d = 0.0; d < 360; d += 360.0 / 35) {
                     Vec2 point = Util.pointOnCircle(radius, d, position.x, position.z);
-                    level.sendParticles(want.options, point.x, position.y, point.y, 1, 0, 0, 0, 0);
+                    level.sendParticles(WANTS.get(want), point.x, position.y, point.y, 1, 0, 0, 0, 0);
                 }
-                radius -= RANGE / 2 / 55;
+                radius -= RANGE / 2 / 455;
                 if (radius <= 0) {
                     fail();
                 }
@@ -109,7 +96,7 @@ public class EvilSkullCraftingWorldEvent extends WorldEvent {
     private boolean handleThrownPotion(ThrownPotion thrownPotion) {
         List<MobEffectInstance> effects = PotionUtils.getMobEffects(thrownPotion.getItem());
         for (MobEffectInstance effect : effects) {
-            if (effect.getEffect() == want.effect) {
+            if (effect.getEffect() == want) {
                 wantsSatisfied++;
                 radius = RANGE / 2;
                 if (wantsSatisfied > 3 && level.random.nextBoolean()) {
@@ -129,7 +116,11 @@ public class EvilSkullCraftingWorldEvent extends WorldEvent {
     @Override
     public void end() {
         if (skull != null) {
-            skull.discard();
+            ItemStack stack = skull.getItem();
+            stack.shrink(1);
+            skull.setItem(stack);
+            skull.setNoPickUpDelay();
+            skull.setExtendedLifetime();
         }
         EntityType.ITEM.spawn(level, null, (entity) -> {
             entity.setItem(new ItemStack(ARItems.EVIL_SKULL.get()));
@@ -142,15 +133,19 @@ public class EvilSkullCraftingWorldEvent extends WorldEvent {
     @Override
     public void fail() {
         if (skull != null) {
-            skull.discard();
+            ItemStack stack = skull.getItem();
+            stack.shrink(1);
+            skull.setItem(stack);
+            skull.setNoPickUpDelay();
+            skull.setExtendedLifetime();
         }
         level.playSound(null, position.x, position.y, position.z, ARSounds.EVIL_IMPACT.get(), SoundSource.MASTER, 1.0F, 1.0F);
         super.fail();
     }
 
-    private Want randomWant() {
-        Want[] wants = Want.values();
-        return wants[level.random.nextInt(wants.length)];
+    private MobEffect randomWant() {
+        List<MobEffect> list = new ArrayList<>(WANTS.keySet());
+        return list.get(level.random.nextInt(list.size()));
     }
 
     @Override
@@ -193,12 +188,6 @@ public class EvilSkullCraftingWorldEvent extends WorldEvent {
                     return;
                 }
             }
-//            for (Entity entity : serverLevel.getEntities(thrownPotion, AABB.ofSize(thrownPotion.position(), RANGE, RANGE, RANGE))) {
-//                if (entity instanceof ItemEntity itemEntity && itemEntity.getItem().is(ARItems.SKELETON_SKULL.get())) {
-//                    new EvilSkullCraftingWorldEvent(serverLevel, itemEntity);
-//                    return;
-//                }
-//            }
         }
     }
 }
