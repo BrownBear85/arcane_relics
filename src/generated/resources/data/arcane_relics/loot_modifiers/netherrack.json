@@ -1,0 +1,16 @@
+{
+  "type": "arcane_relics:replace_item",
+  "chance": 0.4,
+  "conditions": [
+    {
+      "condition": "minecraft:match_tool",
+      "predicate": {
+        "items": [
+          "arcane_relics:bronze_hammer"
+        ]
+      }
+    }
+  ],
+  "item": "arcane_relics:netherrack_dust",
+  "replace": "minecraft:netherrack"
+}

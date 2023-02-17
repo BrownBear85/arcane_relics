@@ -1,7 +1,8 @@
 {
   "entries": [
     "arcane_relics:skeleton",
-    "arcane_relics:zombie"
+    "arcane_relics:zombie",
+    "arcane_relics:netherrack"
   ],
   "replace": false
 }
