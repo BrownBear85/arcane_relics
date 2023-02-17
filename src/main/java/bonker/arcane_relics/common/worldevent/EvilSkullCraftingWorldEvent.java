@@ -83,7 +83,7 @@ public class EvilSkullCraftingWorldEvent extends WorldEvent {
                     Vec2 point = Util.pointOnCircle(radius, d, position.x, position.z);
                     level.sendParticles(WANTS.get(want), point.x, position.y, point.y, 1, 0, 0, 0, 0);
                 }
-                radius -= RANGE / 2 / 455;
+                radius -= RANGE / 2 / 55;
                 if (radius <= 0) {
                     fail();
                 }
